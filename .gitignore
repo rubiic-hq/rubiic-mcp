@@ -3,4 +3,6 @@ node_modules/
 .env.*
 *.mp4
 *.gif
+# The explainer is the one video that belongs here.
+!media/*.mp4
 .mcpregistry_*

@@ -1,0 +1,71 @@
+1
+00:00:01,000 --> 00:00:04,760
+A short video usually takes hours: editing tools,
+
+2
+00:00:04,813 --> 00:00:06,640
+voiceover, and exports.
+
+3
+00:00:06,840 --> 00:00:11,320
+With Rubiic, you describe a video to Claude in one sentence, and
+
+4
+00:00:11,340 --> 00:00:12,840
+get a finished video back.
+
+5
+00:00:13,144 --> 00:00:17,480
+Type: make a thirty-second vertical video explaining how a
+
+6
+00:00:17,528 --> 00:00:18,600
+heat pump works.
+
+7
+00:00:18,840 --> 00:00:23,080
+Rubiic returns it narrated, with music, ready to download.
+
+8
+00:00:23,380 --> 00:00:27,640
+One project gives you the MP4, plus a GIF, still
+
+9
+00:00:27,720 --> 00:00:31,840
+images, a carousel PDF, and captions from any scene.
+
+10
+00:00:32,020 --> 00:00:34,120
+And it checks its own work first.
+
+11
+00:00:34,240 --> 00:00:35,640
+The code compiles.
+
+12
+00:00:35,720 --> 00:00:38,200
+The narration is timed to the animation.
+
+13
+00:00:38,387 --> 00:00:42,120
+It looks at the rendered frames for overlapping or cut-off text.
+
+14
+00:00:42,280 --> 00:00:46,520
+Along the way, you approve the narration, the music, and the
+
+15
+00:00:46,611 --> 00:00:47,240
+export.
+
+16
+00:00:47,560 --> 00:00:50,760
+To start, run two commands in Claude Code.
+
+17
+00:00:50,872 --> 00:00:53,080
+Then describe your first video.
+
+18
+00:00:53,180 --> 00:00:54,440
+Rubiic dot com.

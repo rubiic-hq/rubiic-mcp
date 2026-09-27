@@ -5,6 +5,10 @@ Codex or any MCP client. Describe a video in plain language, answer the agent's
 review questions, then render it to MP4. From any scene you can also export a
 GIF, still images, a carousel or captions.
 
+[![Watch the 60-second explainer](media/rubiic-mcp-explainer-poster.jpg)](media/rubiic-mcp-explainer.mp4)
+
+<sub>Made with Rubiic. Captions: [media/rubiic-mcp-explainer.srt](media/rubiic-mcp-explainer.srt).</sub>
+
 This repository holds no server code. Rubiic runs the MCP servers, and this
 repo is how you connect to them:
 
@@ -92,6 +96,7 @@ registry/         MCP Registry entries, one per server
 clients/          configs for other MCP clients
 docs/             tool reference
 examples/         a scripted client
+media/            the explainer video, its poster and captions
 ```
 
 `skills/rubiic/SKILL.md` is published from Rubiic's own codebase. Edits made

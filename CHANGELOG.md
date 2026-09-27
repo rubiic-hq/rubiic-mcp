@@ -3,6 +3,11 @@
 Changes to the public contract of the two servers (tools, inputs, outputs,
 what costs credits) and to this repository.
 
+## Unreleased
+
+- A 60-second explainer video at the top of the README (`media/`), made with
+  Rubiic, with SRT captions.
+
 ## 0.1.0 — 2026-09-26
 
 - First public release.
