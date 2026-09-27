@@ -1,9 +1,5 @@
 # Add to ~/.codex/config.toml, then set RUBIIC_TOKEN in your shell.
 
-[mcp_servers.rubiic-agent]
-url = "https://rubiic.com/eve/agents/rubiic/eve/v1/mcp"
-bearer_token_env_var = "RUBIIC_TOKEN"
-
 [mcp_servers.rubiic]
 url = "https://rubiic.com/api/mcp"
 bearer_token_env_var = "RUBIIC_TOKEN"

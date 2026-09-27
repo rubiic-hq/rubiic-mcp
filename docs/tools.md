@@ -1,17 +1,29 @@
 # Tool reference
 
-Rubiic exposes two MCP servers. Both are remote, stateless Streamable HTTP, and
-both take the same bearer token.
+One remote MCP server, stateless Streamable HTTP:
 
-| Server | URL | What it does |
-| --- | --- | --- |
-| `rubiic-agent` | `https://rubiic.com/eve/agents/rubiic/eve/v1/mcp` | Starts a **new** video from a brief and carries the conversation to done. |
-| `rubiic` | `https://rubiic.com/api/mcp` | Reads and drives **existing** projects: scenes, renders, exports, downloads. |
+```
+https://rubiic.com/api/mcp
+```
+
+It accepts either credential:
+
+- **Sign-in (OAuth).** An unauthenticated request gets a `401` whose
+  `WWW-Authenticate` names the protected-resource metadata at
+  `/.well-known/oauth-protected-resource/api/mcp`. A client that implements MCP
+  authorization signs the person in through rubiic.com and gets its own token.
+  This is how Claude's connectors connect.
+- **A personal access token** (`rbc_…`, from rubiic.com/account) as
+  `Authorization: Bearer`.
+
+Both act as the account that granted them, and both reach the same eleven
+tools. The server's `instructions` summarise the workflow for clients that
+haven't loaded the skill.
 
 Every `agent_start` creates a new project. To check on, render or download
-something that already exists, use `rubiic`, never `rubiic-agent`.
+something that already exists, use the project tools, never `agent_start`.
 
-## `rubiic-agent`
+## Starting a video: `agent_*`
 
 | Tool | Input | Returns |
 | --- | --- | --- |
@@ -35,10 +47,14 @@ something that already exists, use `rubiic`, never `rubiic-agent`.
 
 The last three are terminal. Stop polling when you reach one.
 
-## `rubiic`
+## Projects, renders and exports
 
 All tools except `list_projects` take a `projectId`. Take every id from these
 tools' own responses. Never parse one out of the agent's chat text.
+
+### What costs credits
+
+`agent_start` (the agent's model usage while it builds the video), plus:
 
 | Tool | Input | Costs credits |
 | --- | --- | --- |
@@ -102,3 +118,10 @@ A tool that fails returns `isError: true` with a message meant to be shown to
 a person. A missing token or a revoked one is rejected with HTTP 401 before any
 tool runs. A project that isn't yours looks exactly like a project that
 doesn't exist.
+
+## Older URL
+
+0.1 served the four `agent_*` tools from a second server at
+`https://rubiic.com/eve/agents/rubiic/eve/v1/mcp` (`rubiic-agent`). It still
+works with a personal access token, but everything is on `/api/mcp` now, and
+new setups should use only that.

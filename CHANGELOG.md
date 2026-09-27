@@ -3,8 +3,20 @@
 Changes to the public contract of the two servers (tools, inputs, outputs,
 what costs credits) and to this repository.
 
-## Unreleased
+## 0.2.0 — 2026-09-27
 
+- **One server.** `https://rubiic.com/api/mcp` now serves all eleven tools,
+  including `agent_start`, `agent_get`, `agent_update` and `agent_cancel`. The
+  plugin, the client configs and the skill use only `rubiic`. The old
+  `rubiic-agent` URL keeps working, but it is no longer configured or
+  advertised, and `com.rubiic/rubiic-agent` is deprecated on the MCP Registry.
+- **Sign in from Claude.** The server supports MCP authorization (OAuth), so
+  Claude Desktop, claude.ai and mobile can add Rubiic as a custom connector
+  with no token. Connected apps are listed, and can be disconnected, on
+  rubiic.com/account.
+- The token header is now optional in the Registry entry.
+- Removed `clients/claude-desktop.json` (the `mcp-remote` workaround). Use the
+  connector instead.
 - A 60-second explainer video at the top of the README (`media/`), made with
   Rubiic, with SRT captions.
 

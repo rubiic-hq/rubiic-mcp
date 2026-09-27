@@ -1,98 +1,109 @@
 # Rubiic MCP
 
-Make videos with [Rubiic](https://rubiic.com) from Claude Code, Cursor, VS Code,
-Codex or any MCP client. Describe a video in plain language, answer the agent's
-review questions, then render it to MP4. From any scene you can also export a
-GIF, still images, a carousel or captions.
+Make videos with [Rubiic](https://rubiic.com) from Claude and any other MCP
+client. Describe a video in plain language, answer the agent's review
+questions, then render it to MP4. From any scene you can also export a GIF,
+still images, a carousel or captions.
 
 [![Watch the 60-second explainer](media/rubiic-mcp-explainer-poster.jpg)](media/rubiic-mcp-explainer.mp4)
 
 <sub>Made with Rubiic. Captions: [media/rubiic-mcp-explainer.srt](media/rubiic-mcp-explainer.srt).</sub>
 
-This repository holds no server code. Rubiic runs the MCP servers, and this
-repo is how you connect to them:
+One MCP server does everything:
 
-- a Claude Code plugin with the skill and both servers
+```
+https://rubiic.com/api/mcp
+```
+
+This repository holds no server code. Rubiic runs the server, and this repo is
+how you connect to it:
+
+- a Claude Code plugin with the server and the `rubiic` skill
 - copy-paste configs for other clients
 - the tool reference
 - a small scripted example
 
-## 1. Get a token
+You need a Rubiic account. Everything you do over MCP is billed to it, the same
+as in the app. See [what costs credits](docs/tools.md#what-costs-credits).
 
-Sign in at [rubiic.com](https://rubiic.com), open **Account → API tokens**, and
-create a token. It starts with `rbc_` and is **shown once**, so copy it right
-away. You can revoke it from the same page at any time.
+## Claude (Desktop, claude.ai, mobile)
 
-Everything you do over MCP is billed to your account, the same as in the app.
-See [what costs credits](docs/tools.md#rubiic).
+1. Open **Settings → Connectors → Add custom connector**.
+2. Name it `Rubiic` and paste `https://rubiic.com/api/mcp`, then click
+   **Add** and **Connect**.
+3. rubiic.com opens. Sign in if you need to, check that the page names
+   `claude.ai` as where it will send you back, and click **Allow access**.
 
-## 2. Connect
+That's it. There's no token to copy. To disconnect, remove the connector in
+Claude or click **Disconnect** under **Connected apps** on
+[rubiic.com/account](https://rubiic.com/account). Disconnecting takes effect
+within the hour.
 
-### Claude Code (recommended)
+## Claude Code
 
 ```
 /plugin marketplace add rubiic-hq/rubiic-mcp
 /plugin install rubiic@rubiic
 ```
 
-Claude Code asks for your token once and keeps it in your system's secure
-credential store. The plugin adds both servers and the `rubiic` skill, which
-teaches the agent how to poll, when a call spends credits, and how to handle
-downloads.
+Claude Code asks for a personal access token once and keeps it in your
+system's secure credential store. Create one under **Account → API tokens** on
+[rubiic.com](https://rubiic.com/account). It starts with `rbc_` and is
+**shown once**, so copy it right away. The plugin adds the server and the
+`rubiic` skill, which teaches the agent how to poll, when a call spends
+credits, and how to handle downloads.
 
 If you'd rather not use the plugin, see [clients/claude-code.md](clients/claude-code.md).
 
-### Other clients
+## Other clients
 
 | Client | Config |
 | --- | --- |
 | Cursor | [clients/cursor.json](clients/cursor.json) |
 | VS Code | [clients/vscode.json](clients/vscode.json) |
 | Codex CLI | [clients/codex.toml](clients/codex.toml) |
-| Claude Desktop | [clients/claude-desktop.json](clients/claude-desktop.json) |
+
+These use a personal access token as a bearer. The server also supports MCP
+sign-in (OAuth), so a client that implements it can leave the header out and
+sign in through rubiic.com instead. That path has been verified with Claude's
+connectors; other clients vary.
 
 To teach any other agent how to use Rubiic, point it at the skill:
 <https://rubiic.com/skills/rubiic/SKILL.md>.
 
-## 3. Make a video
+## Make a video
 
-Ask your agent something like:
+Ask Claude something like:
 
 > Make a 30-second vertical video explaining how a heat pump works, then render
 > it and give me the MP4.
 
-The agent starts the video with `rubiic-agent` and answers the review
-questions (it may pass them to you). It then finds the new project with
-`rubiic`, renders it, and downloads the result.
-
-## Two servers, and why
-
-| Server | URL | Use it to |
-| --- | --- | --- |
-| `rubiic-agent` | `https://rubiic.com/eve/agents/rubiic/eve/v1/mcp` | start a **new** video from a brief |
-| `rubiic` | `https://rubiic.com/api/mcp` | read, render, export and download **existing** projects |
-
-`agent_start` always creates a new project. Name the two servers differently
-so their tool names never collide. Full reference: [docs/tools.md](docs/tools.md).
+It starts the video with `agent_start` and answers the review questions (it may
+pass them to you). It then finds the new project with `list_projects`, renders
+it, and hands you the download. Full reference: [docs/tools.md](docs/tools.md).
 
 ## Known limits
 
-- **Static token only.** There is no OAuth discovery yet, so a client that
-  can't send an `Authorization` header can't connect directly. Claude.ai web
-  connectors are one example. Claude Desktop works through `mcp-remote`
-  (see its config).
-- **No continuing a conversation.** Each `agent_start` is a new project. To
-  revise an existing video, use the app.
-- **Tokens are account-wide.** A token can do everything your account can,
-  including spending credits.
+- **Every `agent_start` is a new project.** You can't continue or revise an
+  existing video over MCP yet. To revise one, use the app.
+- **Access is account-wide.** A connected app or a token can do everything your
+  account can over MCP, including spending credits. There are no read-only or
+  spend-limited grants yet.
+
+## Upgrading from 0.1
+
+0.1 used two servers: `rubiic-agent` for the `agent_*` tools and `rubiic` for
+the rest. Everything is on `rubiic` now. `/plugin update rubiic@rubiic` picks it
+up; if you added the servers by hand, remove `rubiic-agent`. Its URL keeps
+working for anything still pointed at it.
 
 ## Repository layout
 
 ```
 .claude-plugin/   Claude Code plugin + marketplace manifests
-.mcp.json         the plugin's two servers
+.mcp.json         the plugin's server
 skills/rubiic/    the agent skill (mirrors https://rubiic.com/skills/rubiic/SKILL.md)
-registry/         MCP Registry entries, one per server
+registry/         the MCP Registry entry
 clients/          configs for other MCP clients
 docs/             tool reference
 examples/         a scripted client

@@ -6,38 +6,37 @@ description: Use when asked to make, export, or fetch a video, GIF, image, still
 # Rubiic over MCP
 
 Rubiic turns a brief into a rendered MP4 (and, from any scene, a GIF, still
-image, carousel, or caption file) through two MCP endpoints. This skill
-covers both: eve's agent channel, which authors and revises a project by
-conversation, and the control endpoint, which reads and drives an existing
-project's renders and exports.
+image, carousel, or caption file). One MCP server does all of it: it starts
+new videos by conversation with Rubiic's agent, and it reads and drives
+existing projects' renders and exports.
 
 ## 1. Connect
 
-Both endpoints accept the same bearer: a personal access token, minted once
-under **API tokens** on https://rubiic.com/account. The token is shown
-exactly once — copy it immediately — and can be revoked from the same page at
-any time.
+The server is `https://rubiic.com/api/mcp`.
 
-Add both servers (naming them differently so tool names never collide):
+- **Claude apps (Desktop, claude.ai, mobile):** add it as a custom connector
+  (Settings → Connectors → Add custom connector) and sign in to Rubiic when
+  asked.
+- **Claude Code and other clients:** use a personal access token, minted
+  under **API tokens** on https://rubiic.com/account. It is shown exactly
+  once — copy it immediately — and can be revoked from the same page.
 
 ```bash
-claude mcp add --transport http rubiic-agent \
-  https://rubiic.com/eve/agents/rubiic/eve/v1/mcp \
-  --header "Authorization: Bearer <token>"
-
 claude mcp add --transport http rubiic \
   https://rubiic.com/api/mcp \
   --header "Authorization: Bearer <token>"
 ```
 
-`rubiic-agent` is eve's own channel: it authors and revises scenes by
-conversation and only ever starts a *new* project. `rubiic` is the control
-endpoint: it reads and drives an *existing* project — projects, scenes,
-renders, exports, download URLs. For anything about a project that already
-exists, use `rubiic`, never `rubiic-agent` — `agent_start` on the eve channel
-always creates a new project, even if you only meant to check on an old one.
+(An older setup may also have `rubiic-agent` at
+`https://rubiic.com/eve/agents/rubiic/eve/v1/mcp`. It still works and serves
+the same four `agent_*` tools; you do not need it.)
 
-## 2. The invocation rhythm (eve channel: `rubiic-agent`)
+`agent_start` always creates a *new* project. For anything about a project
+that already exists — status, scenes, renders, exports, downloads — use the
+project tools below, never `agent_start`, even if you only meant to check on
+an old one.
+
+## 2. The invocation rhythm (`agent_*`)
 
 1. `agent_start({message})` — one new project per call. Returns an
    `invocationId` and a `status`.
@@ -61,11 +60,10 @@ always creates a new project, even if you only meant to check on an old one.
 again afterward to see it take effect.
 
 `agent_start` always makes a new project — there is no "continue this
-project" call on the eve channel. Once a project exists (from `agent_start`,
-or from the app itself), everything about it — status, artifacts, renders,
-exports, downloads — goes through the control endpoint (`rubiic`) below.
+project" call. Once a project exists (from `agent_start`, or from the app
+itself), everything about it goes through the project tools below.
 
-## 3. Recipes (control endpoint: `rubiic`)
+## 3. Recipes (project tools)
 
 All control tools take a `projectId`. Get one from `list_projects` or from
 the `chatId`/`projectId` you tracked after `agent_start`.
@@ -97,9 +95,9 @@ the `chatId`/`projectId` you tracked after `agent_start`.
    from export_status>})` — fetch the `url` immediately.
 
 **Starting from a chat brief, end to end:**
-1. `list_projects({})` on `rubiic` FIRST and remember the set of `projectId`s.
-2. `agent_start({message: "<brief, naming the format you want>"})` on
-   `rubiic-agent`, poll per §2 to `completed`.
+1. `list_projects({})` FIRST and remember the set of `projectId`s.
+2. `agent_start({message: "<brief, naming the format you want>"})`, poll per
+   §2 to `completed`.
 3. `list_projects({})` again. The new project is the `projectId` that was not
    in the set from step 1 — do NOT assume the newest row is yours, since
    another session may have created a project meanwhile. If more than one is
@@ -110,7 +108,7 @@ the `chatId`/`projectId` you tracked after `agent_start`.
    yourself.
 5. `get_download_url(...)` to fetch it.
 
-Always resolve `renderId`/`exportId`/`sceneId` from the control endpoint's
+Always resolve `renderId`/`exportId`/`sceneId` from the project tools'
 own responses (`get_project`, `start_render`, `start_export`,
 `render_status`, `export_status`). Never parse an id out of the agent's chat
 prose — the agent's own message is not a source of truth for ids.

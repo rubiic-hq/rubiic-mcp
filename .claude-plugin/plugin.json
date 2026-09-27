@@ -1,12 +1,21 @@
 {
   "name": "rubiic",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Make videos with Rubiic from your coding agent: start one from a brief, render it to MP4, and export GIFs, stills, carousels and captions.",
-  "author": { "name": "Rubiic", "url": "https://rubiic.com" },
+  "author": {
+    "name": "Rubiic",
+    "url": "https://rubiic.com"
+  },
   "homepage": "https://rubiic.com",
   "repository": "https://github.com/rubiic-hq/rubiic-mcp",
   "license": "MIT",
-  "keywords": ["video", "remotion", "mp4", "gif", "mcp"],
+  "keywords": [
+    "video",
+    "remotion",
+    "mp4",
+    "gif",
+    "mcp"
+  ],
   "userConfig": {
     "api_token": {
       "type": "string",
