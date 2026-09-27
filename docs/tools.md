@@ -27,10 +27,17 @@ something that already exists, use the project tools, never `agent_start`.
 
 | Tool | Input | Returns |
 | --- | --- | --- |
-| `agent_start` | `{ message }` | `{ invocationId, status, pollAfterMs, … }` |
+| `agent_start` | `{ message, modelTeam? }` | `{ invocationId, status, pollAfterMs, … }` |
 | `agent_get` | `{ invocationId }` | the invocation's current state |
 | `agent_update` | `{ invocationId, responses }` | the invocation after your answers |
 | `agent_cancel` | `{ invocationId }` | the cancellation request |
+
+`modelTeam` picks the models that make the video: `economy` (the default when
+it's left out, and the cheapest), `balanced`, or `premium` (the best writing and
+animation, at several times the cost). It's fixed for the project once it
+starts. Balanced and Premium need an account that has bought credits or has a
+plan. A free account that asks for one gets a tool error saying so, and nothing
+starts or is billed. An unknown value is a tool error too.
 
 `status` is one of:
 

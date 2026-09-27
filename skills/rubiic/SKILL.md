@@ -38,8 +38,15 @@ an old one.
 
 ## 2. The invocation rhythm (`agent_*`)
 
-1. `agent_start({message})` — one new project per call. Returns an
-   `invocationId` and a `status`.
+1. `agent_start({message, modelTeam?})` — one new project per call. Returns
+   an `invocationId` and a `status`. `modelTeam` picks the models that make
+   the video: `economy` (the default when it is left out, and the cheapest),
+   `balanced`, or `premium` (the best writing and animation, several times
+   the cost). Name `premium` only when the user asks for top quality or for
+   Premium by name. Balanced and Premium need an account that has bought
+   credits or has a plan; a free account asking for one gets a tool error
+   saying so, and nothing starts or is billed. The team is fixed for the
+   whole project once it starts.
 2. While `status` is `working` (or `authorization_required`), wait at least
    `pollAfterMs` (from the last response) before calling
    `agent_get({invocationId})` again. Do not poll faster.
