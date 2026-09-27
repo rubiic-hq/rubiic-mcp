@@ -1,0 +1,35 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 9 * * *" # daily: catches a skill change shipped on rubiic.com
+  workflow_dispatch:
+
+jobs:
+  skill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/check-skill.sh
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Registry entries match the server.json schema
+        run: |
+          curl -fsSL https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json -o /tmp/server.schema.json
+          for f in registry/*/server.json; do
+            npx --yes -p ajv-cli@5 -p ajv-formats@3 ajv validate --spec=draft7 --strict=false -c ajv-formats -s /tmp/server.schema.json -d "$f"
+          done
+      - name: Plugin manifests are valid JSON
+        run: |
+          for f in .claude-plugin/*.json .mcp.json clients/*.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "ok $f"
+          done

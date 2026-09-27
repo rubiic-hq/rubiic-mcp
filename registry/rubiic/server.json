@@ -1,0 +1,31 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.rubiic/rubiic",
+  "title": "Rubiic",
+  "description": "Render your Rubiic video projects to MP4, export GIFs, stills and captions, and fetch downloads.",
+  "version": "0.1.0",
+  "websiteUrl": "https://rubiic.com",
+  "repository": { "url": "https://github.com/rubiic/rubiic-mcp", "source": "github" },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://rubiic.com/api/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "A personal access token from https://rubiic.com/account, sent as a bearer.",
+          "value": "Bearer {api_token}",
+          "isRequired": true,
+          "isSecret": true,
+          "variables": {
+            "api_token": {
+              "description": "Rubiic personal access token (starts with rbc_).",
+              "isRequired": true,
+              "isSecret": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

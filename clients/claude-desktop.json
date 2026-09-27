@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "rubiic-agent": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "https://rubiic.com/eve/agents/rubiic/eve/v1/mcp",
+        "--header", "Authorization:${RUBIIC_AUTH}"
+      ],
+      "env": { "RUBIIC_AUTH": "Bearer rbc_..." }
+    },
+    "rubiic": {
+      "command": "npx",
+      "args": [
+        "-y", "mcp-remote",
+        "https://rubiic.com/api/mcp",
+        "--header", "Authorization:${RUBIIC_AUTH}"
+      ],
+      "env": { "RUBIIC_AUTH": "Bearer rbc_..." }
+    }
+  }
+}

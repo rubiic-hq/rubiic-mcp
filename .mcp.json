@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "rubiic-agent": {
+      "type": "http",
+      "url": "https://rubiic.com/eve/agents/rubiic/eve/v1/mcp",
+      "headers": { "Authorization": "Bearer ${user_config.api_token}" }
+    },
+    "rubiic": {
+      "type": "http",
+      "url": "https://rubiic.com/api/mcp",
+      "headers": { "Authorization": "Bearer ${user_config.api_token}" }
+    }
+  }
+}

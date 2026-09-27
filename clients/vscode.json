@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "rubiic-token",
+      "description": "Rubiic API token (rubiic.com/account → API tokens)",
+      "password": true
+    }
+  ],
+  "servers": {
+    "rubiic-agent": {
+      "type": "http",
+      "url": "https://rubiic.com/eve/agents/rubiic/eve/v1/mcp",
+      "headers": { "Authorization": "Bearer ${input:rubiic-token}" }
+    },
+    "rubiic": {
+      "type": "http",
+      "url": "https://rubiic.com/api/mcp",
+      "headers": { "Authorization": "Bearer ${input:rubiic-token}" }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rubiic",
+  "owner": { "name": "Rubiic", "url": "https://rubiic.com" },
+  "metadata": {
+    "description": "The official Rubiic plugin for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "rubiic",
+      "source": "./",
+      "description": "Make videos with Rubiic from your coding agent: start one from a brief, render it to MP4, and export GIFs, stills, carousels and captions."
+    }
+  ]
+}
