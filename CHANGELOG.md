@@ -3,6 +3,15 @@
 Changes to the public contract of the two servers (tools, inputs, outputs,
 what costs credits) and to this repository.
 
+## 0.2.1 — 2026-09-27
+
+- **Pick a model team.** `agent_start` takes an optional `modelTeam`:
+  `economy` (the default), `balanced` or `premium`. Before this, every video
+  started over MCP ran on Economy, whatever the account had paid for. Balanced
+  and Premium need bought credits or a plan; a free account gets a tool error
+  and nothing starts. The skill says to ask for Premium only when the user
+  wants top quality.
+
 ## 0.2.0 — 2026-09-27
 
 - **One server.** `https://rubiic.com/api/mcp` now serves all eleven tools,
