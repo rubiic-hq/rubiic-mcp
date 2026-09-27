@@ -27,7 +27,7 @@ See [what costs credits](docs/tools.md#rubiic).
 ### Claude Code (recommended)
 
 ```
-/plugin marketplace add rubiic/rubiic-mcp
+/plugin marketplace add rubiic-hq/rubiic-mcp
 /plugin install rubiic@rubiic
 ```
 
@@ -100,7 +100,7 @@ matches what rubiic.com serves.
 
 ## Support
 
-- Bugs and questions: [open an issue](https://github.com/rubiic/rubiic-mcp/issues)
+- Bugs and questions: [open an issue](https://github.com/rubiic-hq/rubiic-mcp/issues)
 - Security: see [SECURITY.md](SECURITY.md). Please don't file those publicly.
 
 ## License
