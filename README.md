@@ -5,7 +5,11 @@ client. Describe a video in plain language, answer the agent's review
 questions, then render it to MP4. From any scene you can also export a GIF,
 still images, a carousel or captions.
 
-[![Watch the 60-second explainer](media/rubiic-mcp-explainer-poster.jpg)](media/rubiic-mcp-explainer.mp4)
+
+
+https://github.com/user-attachments/assets/c3945c16-6663-488c-9518-151e29e27e33
+
+
 
 <sub>Made with Rubiic. Captions: [media/rubiic-mcp-explainer.srt](media/rubiic-mcp-explainer.srt).</sub>
 
