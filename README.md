@@ -83,8 +83,12 @@ Ask Claude something like:
 > it and give me the MP4.
 
 It starts the video with `agent_start` and answers the review questions (it may
-pass them to you). It then finds the new project with `list_projects`, renders
-it, and hands you the download. Full reference: [docs/tools.md](docs/tools.md).
+pass them to you). It then looks up the new project with `get_project`, renders
+it, and hands you the download. You can attach PDFs for Rubiic to work from.
+Full reference: [docs/tools.md](docs/tools.md).
+
+After connecting, ask it to run `connection_status`. That's a free check that
+the connection works end to end.
 
 ## Known limits
 

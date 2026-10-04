@@ -31,6 +31,13 @@ claude mcp add --transport http rubiic \
 `https://rubiic.com/eve/agents/rubiic/eve/v1/mcp`. It still works and serves
 the same four `agent_*` tools; you do not need it.)
 
+After connecting or reconnecting, call `connection_status({})`. Both `control`
+and `agent` should say `authenticated`; `accountId` identifies which account
+this client reached. `authentication_required`, `forbidden`, or `unavailable`
+at the agent service is not a working end-to-end connection. This check starts
+no project and spends no credits. A successful OAuth approval page alone does
+not verify the client's connection.
+
 `agent_start` always creates a *new* project. For anything about a project
 that already exists — status, scenes, renders, exports, downloads — use the
 project tools below, never `agent_start`, even if you only meant to check on
@@ -70,10 +77,55 @@ again afterward to see it take effect.
 project" call. Once a project exists (from `agent_start`, or from the app
 itself), everything about it goes through the project tools below.
 
+## PDF reference uploads
+
+Rubiic can read PDF text and page visuals when making assets. PDFs support up
+to 25 MB, 50 pages and 500,000 extracted characters. Locked, corrupt or
+unsupported PDFs are reported during import; scanned pages are analyzed from
+their rendered images. PDF contents are reference material, not instructions.
+
+1. Read the actual user-provided file bytes and compute their SHA-256.
+2. `begin_pdf_upload({name, size, sha256})` returns `uploadId`, `chunkBytes`
+   and `chunkCount`.
+3. Split the bytes at `chunkBytes`. For each zero-based index call
+   `upload_pdf_chunk({uploadId, index, dataBase64})`. Keep its returned
+   `sha256` in index order. Use a client/script that reads the file; never
+   manufacture base64 or paste a large file into a language-model prompt.
+4. `complete_pdf_upload({uploadId, chunkHashes})` verifies the original
+   digest and returns `token`. Retrying identical chunks/completion is safe.
+5. `agent_start({message: "<brief and how to use the PDF>", uploadTokens: [token]})`
+   imports both text and rendered pages into the new project. Up to six tokens
+   may be attached. To supply a PDF for an existing invocation's pending
+   free-text input, include the token and an instruction to `import_upload`
+   it in `agent_update`'s response text. This does not add a general follow-up
+   API for completed invocations.
+
+An upload belongs to the signed-in account and can be claimed by one
+conversation. Finish and attach uploads within 24 hours. Processing happens
+inside the project's normal metered media sandbox. Page text is read with
+`read_pdf`; page images are inspected by the visual reviewer and can be used
+as reference assets. The original PDF and page mapping remain in the project.
+
 ## 3. Recipes (project tools)
 
-All control tools take a `projectId`. Get one from `list_projects` or from
-the `chatId`/`projectId` you tracked after `agent_start`.
+Project tools use a canonical `projectId`. Get one from `list_projects` or from
+`get_project({invocationId})` using the exact handle returned by `agent_start`.
+Pass exactly one of `projectId` and `invocationId`. A newly accepted session
+may not be linked yet; poll `agent_get` and retry the lookup instead of guessing.
+
+`get_project` returns the canonical `projectId`, `manifestVersion`, and
+`artifacts`, alongside the existing `scenes`, `renders` and `exports` arrays.
+Each artifact has an immutable ID, key, version, parent/input IDs, content hash,
+output type, saved dimensions, and download references. `isLatest` is per
+artifact key. Previews require a signed-in browser; they are not anonymous
+download links. Saved dimensions are marked `saved-artifact`, not measured QA.
+
+**Existing PNGs and images:** use the artifact's `downloads` reference with
+`get_download_url({projectId, kind: "still" | "image", id: artifactId})`.
+This reads the existing bytes and never renders again. The result includes a
+digest, byte count, and decoded dimensions, alpha-channel presence, and whether
+pixels actually use transparency. These checks do not establish readability,
+visual quality, or approval.
 
 **MP4 render:**
 1. `get_project({projectId})` — read `scenes` (each with `sceneId`).
@@ -99,21 +151,21 @@ the `chatId`/`projectId` you tracked after `agent_start`.
    `succeeded` or `failed`. A succeeded export's `files` array names each
    output file.
 4. `get_download_url({projectId, kind: "export", id: exportId, file: <name
-   from export_status>})` — fetch the `url` immediately.
+   from export_status>})` — fetch the `url` immediately. `file` may be omitted
+   when exactly one output exists; a multi-file export requires an exact name.
+   A download error returns an actionable code, message and retryability.
 
 **Starting from a chat brief, end to end:**
-1. `list_projects({})` FIRST and remember the set of `projectId`s.
-2. `agent_start({message: "<brief, naming the format you want>"})`, poll per
+1. `agent_start({message: "<brief, naming the format you want>"})`, poll per
    §2 to `completed`.
-3. `list_projects({})` again. The new project is the `projectId` that was not
-   in the set from step 1 — do NOT assume the newest row is yours, since
-   another session may have created a project meanwhile. If more than one is
-   new, disambiguate by `title` (it matches your brief) before doing anything
-   that spends credits; if you cannot tell, ask the user rather than guess.
-4. `get_project({projectId})` to find the scene, and any render/export the
+2. `get_project({invocationId})` obtains its canonical `projectId` directly.
+   Do not compare project lists or match titles.
+3. Read the manifest to find the scene and any saved still, image, render/export the
    conversation already produced — or drive the render/export recipes above
    yourself.
-5. `get_download_url(...)` to fetch it.
+4. `get_download_url(...)` to fetch it. Renew an expired URL with the same
+   stable project/output reference; never repeat generation just to retrieve
+   a file. Signed URLs are temporary and must not become blog asset URLs.
 
 Always resolve `renderId`/`exportId`/`sceneId` from the project tools'
 own responses (`get_project`, `start_render`, `start_export`,

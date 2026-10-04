@@ -1,6 +1,6 @@
 {
   "name": "rubiic",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Make videos with Rubiic from your coding agent: start one from a brief, render it to MP4, and export GIFs, stills, carousels and captions.",
   "author": {
     "name": "Rubiic",
